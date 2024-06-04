@@ -18,7 +18,7 @@ const addTodo = asyncHandler(async (req, res) => {
 const getTodos = asyncHandler(async (req, res) => {
   try {
     const todos = await TODO.find({});
-    console.log(todos);
+    // console.log(todos);
     return res.status(200).json(new ApiResponse(200, todos));
   } catch (err) {
     console.log("error", err);
@@ -27,24 +27,30 @@ const getTodos = asyncHandler(async (req, res) => {
 
 const deleteTodo = asyncHandler(async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
+   
     const data = await TODO.findByIdAndDelete(id);
-    return res.status(200).json(new ApiResponse(200, "deleted successfully"));
+
+    if (!data) {
+      return res.status(404).json(new ApiResponse(404, "Todo item not found"));
+    }
+
+    return res.status(200).json(new ApiResponse(200, "Deleted successfully"));
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    return res.status(500).json(new ApiResponse(500, "An error occurred while deleting the todo item"));
   }
 });
 
+
 const updateTodo = asyncHandler(async(req,res)=>{
   try {
-    const {_id,todo,isComplete}= req.body
+     const {_id,todo}= req.body
       const data =await  TODO.findByIdAndUpdate(_id,{
       $set:{
-        todo,
-        isComplete
+        todo
       }
     })
-    console.log(data);
     return res.status(200)
     .json(
       new ApiResponse(200,"updated sucessfully")
@@ -53,4 +59,27 @@ const updateTodo = asyncHandler(async(req,res)=>{
     
   }
 })
-export { getTodos, deleteTodo, addTodo,updateTodo };
+const updatedIsComplete = asyncHandler(async (req, res) => {
+  try {
+    const { isComplete,id } = req.body;
+    console.log(isComplete,id);
+    const data = await TODO.findByIdAndUpdate(id, {
+      $set: { isComplete }
+    }, { new: true });
+    
+    return res.status(200).json({
+      status: 200,
+      message: "isComplete updated successfully",
+      data
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: 500,
+      message: "An error occurred while updating isComplete",
+      error: error.message
+    });
+  }
+});
+
+export { getTodos, deleteTodo, addTodo,updateTodo,updatedIsComplete };
