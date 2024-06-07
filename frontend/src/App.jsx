@@ -1,42 +1,45 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { setTodos, insertTodo, removeTodo, updateDone } from './feature/todoSlice'
 
 const App = () => {
-  const [todos, setTodos] = useState([])
+  // const [todos, setTods] = useState('')
+  const todos = useSelector(state => state.todos.todos)
   const [todo, setTodo] = useState('')
+  const dispatch = useDispatch()
 
   const addTodo = useCallback(() => {
     if (todo) {
       axios.post('http://localhost:8000/api/todos', { todo })
-        .catch(err => console.error(err));
+        .then(res => dispatch(insertTodo(res.data.data)))
+        .catch(err => console.error(err))
     }
     setTodo('')
-  }, [todo]);
+  }, [dispatch, todo]);
 
   const deleteTodo = useCallback((id) => {
     axios.delete(`http://localhost:8000/api/todos/${id}`)
+      .then(res => dispatch(removeTodo(res.data.data)))
       .catch(err => console.error(err));
-  }, []);
+  }, [dispatch]);
 
   const handleCheckbox = useCallback((e, id) => {
     const isComplete = e.target.checked;
     axios.patch('http://localhost:8000/api/todos/updateIsComplete', { isComplete, id })
-      .then(response => {
-        console.log('isComplete updated successfully', response.data);
-      })
+      .then(res => dispatch(updateDone(res.data.data._id, res.data.data.isComplete)))
       .catch(err => {
         console.error('Error updating isComplete:', err);
       });
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/todos')
-      .then(res => setTodos(res.data.data))
+      .then(res => dispatch(setTodos(res.data.data)))
       .catch(err => console.error(err));
-  }, [addTodo])
+  }, [dispatch, todos])
   return (
     <div className='w-full bg-slate-800'>
-
       <div className='w-full md:w-1/2 bg-slate-900 p-2 mx-auto mt-20'>
         <h2 className='uppercase font-bold text-white text-center my-4'>todo</h2>
         <div className='w-full flex justify-center items-center'>
@@ -44,7 +47,7 @@ const App = () => {
             value={todo}
             type='text'
             placeholder='Enter todo...'
-            onChange={(e) => setTodo(e.target.value.trim())}
+            onChange={(e) => setTodo(e.target.value)}
           />
           <button className='bg-white px-4 py-1 m-1 rounded hover:bg-slate-400'
             type='button'

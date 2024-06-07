@@ -9,10 +9,10 @@ const addTodo = asyncHandler(async (req, res) => {
     return new ApiError(400, "Todo is required!");
   }
   try {
-    const todoRes = await TODO.create({ todo });
+    const response = await TODO.create({ todo });
     return res
       .status(200)
-      .json(new ApiResponse(200, "Todo created sucessfully"));
+      .json(new ApiResponse(200,response, "Todo created sucessfully"));
   } catch (error) {}
 });
 const getTodos = asyncHandler(async (req, res) => {
@@ -28,14 +28,14 @@ const getTodos = asyncHandler(async (req, res) => {
 const deleteTodo = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-   
+    //  console.log(id);
     const data = await TODO.findByIdAndDelete(id);
 
     if (!data) {
       return res.status(404).json(new ApiResponse(404, "Todo item not found"));
     }
 
-    return res.status(200).json(new ApiResponse(200, "Deleted successfully"));
+    return res.status(200).json(new ApiResponse(200,data._id, "Deleted successfully"));
   } catch (err) {
     console.error(err);
     return res.status(500).json(new ApiResponse(500, "An error occurred while deleting the todo item"));
