@@ -7,10 +7,7 @@ import errorHandler from "./utils/errorHandler.js";
 
 const app = express();
 
-
 // Middleware for security headers
-app.options('*', cors()); // Allow preflight requests for all routes
-
 app.use(helmet());
 
 // Middleware for logging
@@ -21,13 +18,12 @@ app.use(express.json());
 
 // Enable CORS for all origins
 app.use(cors());
-app.use((req, res, next) => {
-    res.set('Cache-Control', 'no-store');
-    next();
-  });
-  
-app.use(errorHandler)
+
 // Use the router
 app.use("/api/todos", router);
 
+// Centralized Error Handling Middleware
+app.use(errorHandler);
+
+// Export the app for serverless deployment
 export default app
