@@ -1,21 +1,26 @@
-import express from "express"
-import cors from "cors"
-import dotenv from "dotenv"
-import todoRouter from "./routers/todo.router.js"
-dotenv.config()
-const app = express()
+import express from "express";
+import helmet from "helmet";
+import morgan from "morgan";
+import router from "./routers/todo.router.js";
+import cors from 'cors'
+import ApiError from "./utils/ApiError.js";
 
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
-}))
+const app = express();
 
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
 
-//routes declaration
-app.use("/api/todos", todoRouter)
+// Middleware for security headers
+app.use(helmet());
 
-// http://localhost:8000/api/todos
+// Middleware for logging
+app.use(morgan('combined'));
 
-export { app }
+// Middleware to parse JSON
+app.use(express.json());
+
+// Enable CORS for all origins
+app.use(cors());
+
+// Use the router
+app.use("/api/todos", router);
+
+export default app

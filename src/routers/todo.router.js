@@ -9,6 +9,4 @@ router.route("/").get(getTodos)
 router.route("/:id").delete(deleteTodo)
 // router.route("/").patch(updateTodo)
 router.route("/updateIsComplete").patch(updatedIsComplete)
-
-
 export default router
