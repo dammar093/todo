@@ -36,29 +36,7 @@ const deleteTodo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, data._id, "Deleted successfully"));
 });
 
-// Update Todo
-const updateTodo = asyncHandler(async (req, res) => {
-  const { _id, todo } = req.body;
-  if (!todo || todo.trim() === "") {
-    throw new ApiError(400, "Todo is required!");
-  }
 
-  const data = await TODO.findByIdAndUpdate(
-    _id,
-    {
-      $set: { todo },
-    },
-    { new: true }
-  );
-
-  if (!data) {
-    throw new ApiError(404, "Todo item not found");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, data, "Updated successfully"));
-});
 
 // Update isComplete status
 const updatedIsComplete = asyncHandler(async (req, res) => {
@@ -85,4 +63,4 @@ const updatedIsComplete = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, data, "isComplete updated successfully"));
 });
 
-export { getTodos, deleteTodo, addTodo, updateTodo, updatedIsComplete };
+export { getTodos, deleteTodo, addTodo,  updatedIsComplete };
