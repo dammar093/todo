@@ -2,4 +2,4 @@ const dbName = "todo"
 
 
 
-export {dbName}
+module.exports = dbName;

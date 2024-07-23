@@ -1,30 +1,29 @@
-import express from "express";
-import helmet from "helmet";
-import morgan from "morgan";
-import router from "./routers/todo.router.js";
-import cors from 'cors'
-import errorHandler from "./utils/errorHandler.js";
-import path from 'path'
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const path = require("path");
+const todoRouter = require("../src/router/todo");
+
+dotenv.config();
+
 const app = express();
 
-// Middleware for security headers
-app.use(helmet());
+// Middleware
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true
+}));
 
-// Middleware for logging
-app.use(morgan('combined'));
-
-// Middleware to parse JSON
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Enable CORS for all origins
-app.use(cors());
-//react app
-app.use(express.static(path.resolve(__dirname,'build')))
-// Use the router
-app.use("/api/todos", router);
+// Serve static files
+app.use(express.static(path.resolve(__dirname, 'build')));
 
-// Centralized Error Handling Middleware
-app.use(errorHandler);
+// Routes declaration
+app.use("/api/todos", todoRouter);
+// http://localhost:8000/api/todos
 
-// Export the app for serverless deployment
-export default app
+// Catch-all handler to serve index.html for any non-API routes
+
+module.exports = app;
