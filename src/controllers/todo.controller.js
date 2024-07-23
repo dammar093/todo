@@ -45,7 +45,7 @@ const deleteTodo = asyncHandler(async (req, res) => {
 
 const updateTodo = asyncHandler(async(req,res)=>{
   try {
-     const {_id,todo}= req.body
+    const {_id,todo}= req.body
       const data =await  TODO.findByIdAndUpdate(_id,{
       $set:{
         todo
