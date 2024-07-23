@@ -14,6 +14,9 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 //routes declaration
+app.get("/",(req,res)=>{
+    res.send({ok:true})
+})
 app.use("/api/todos", todoRouter)
 
 // http://localhost:8000/api/todos
