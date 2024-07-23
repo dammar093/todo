@@ -4,7 +4,7 @@ import morgan from "morgan";
 import router from "./routers/todo.router.js";
 import cors from 'cors'
 import errorHandler from "./utils/errorHandler.js";
-
+import path from 'path'
 const app = express();
 
 // Middleware for security headers
@@ -18,7 +18,8 @@ app.use(express.json());
 
 // Enable CORS for all origins
 app.use(cors());
-
+//react app
+app.use(express.static(path.resolve(__dirname,'build')))
 // Use the router
 app.use("/api/todos", router);
 
